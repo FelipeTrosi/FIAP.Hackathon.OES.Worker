@@ -2,12 +2,13 @@ name: 'Multistage'
 
 trigger:
   - main
+
 pr:
   - '*'
 
 variables:
   BuildConfiguration: 'Release'
-  Project: 'FIAP.Hackathon.OES.Worker/FIAP.Hackathon.OES.Worker.csproj'
+  Project: '**/FIAP.Hackathon.OES.Worker.csproj'
   ArtifactName: 'drop'
   PublishDir: '$(Build.ArtifactStagingDirectory)/$(BuildConfiguration)'
 
@@ -49,6 +50,7 @@ stages:
       displayName: 'Publish'
       inputs:
         command: 'publish'
+        publishWebProjects: false
         projects: '$(Project)'
         arguments: '-c $(BuildConfiguration) -o "$(PublishDir)" --no-build'
 
@@ -64,7 +66,7 @@ stages:
   jobs:
   - deployment: DeployJob
     displayName: 'Deploy'
-    environment: 'production' 
+    environment: 'production'
     strategy:
       runOnce:
         deploy:
