@@ -1,7 +1,7 @@
 name: 'Multistage'
 
 trigger:
-  - master
+  - main
 pr:
   - '*'
 
@@ -59,7 +59,7 @@ stages:
 - stage: Deploy
   displayName: 'Deploy Servidor/Aplicação'
   dependsOn: Build
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
   jobs:
   - deployment: DeployJob
