@@ -1,0 +1,73 @@
+name: 'Multistage'
+
+trigger:
+  - master
+pr:
+  - '*'
+
+variables:
+  BuildConfiguration: 'Release'
+  Project: 'FIAP.Hackathon.OES.Worker.API/FIAP.Hackathon.OES.Worker.API.csproj'
+  ArtifactName: 'drop'
+  PublishDir: '$(Build.ArtifactStagingDirectory)/$(BuildConfiguration)'
+
+pool:
+  name: 'SelfHostedPool'
+
+stages:
+
+- stage: Build
+  displayName: 'Build e Publicação de Artefato'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build Job'
+    steps:
+    - checkout: self
+      clean: true
+
+    - task: UseDotNet@2
+      displayName: 'Use .NET SDK 8.x'
+      inputs:
+        packageType: 'sdk'
+        version: '8.x'
+        includePreviewVersions: false
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Restore'
+      inputs:
+        command: 'restore'
+        projects: '$(Project)'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build'
+      inputs:
+        command: 'build'
+        projects: '$(Project)'
+        arguments: '-c $(BuildConfiguration) --no-restore'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish'
+      inputs:
+        command: 'publish'
+        projects: '$(Project)'
+        arguments: '-c $(BuildConfiguration) -o "$(PublishDir)" --no-build'
+
+    - publish: $(Build.ArtifactStagingDirectory)
+      displayName: 'Publish Artifact'
+      artifact: $(ArtifactName)
+
+- stage: Deploy
+  displayName: 'Deploy Servidor/Aplicação'
+  dependsOn: Build
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+
+  jobs:
+  - deployment: DeployJob
+    displayName: 'Deploy'
+    environment: 'production' 
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - download: current
+            artifact: $(ArtifactName)
