@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "FIAP.Hackathon.OES.Worker": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}
