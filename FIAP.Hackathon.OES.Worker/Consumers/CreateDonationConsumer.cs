@@ -16,7 +16,7 @@ public class CreateDonationConsumer(ILogger<CreateDonationConsumer> logger, ICam
 
         _logger.LogInformation("Processando doação para a Campanha={CampaignId} Valor={Amount}", msg.CampaignId, msg.Value);
 
-        _campaignClient.UpdateCampaignDonationValue(msg.CampaignId, msg.Value);
+        await _campaignClient.UpdateCampaignDonationValue(msg.CampaignId, msg.Value);
 
         _logger.LogInformation("Valor arrecadado atualizado na campanha {CampaignId}", msg.CampaignId);
     }

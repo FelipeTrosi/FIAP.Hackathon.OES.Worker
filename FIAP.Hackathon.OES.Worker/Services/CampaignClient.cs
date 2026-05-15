@@ -8,7 +8,7 @@ public class CampaignClient(HttpClient httpClient, ITokenService tokenService) :
     private readonly HttpClient _httpClient = httpClient;
     private readonly ITokenService _tokenService = tokenService;
 
-    public async void UpdateCampaignDonationValue(long campaignId, decimal value)
+    public async Task UpdateCampaignDonationValue(long campaignId, decimal value)
     {
         var token = await _tokenService.GetTokenAsync();
 

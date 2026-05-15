@@ -2,5 +2,5 @@
 
 public interface ICampaignClient
 {
-    void UpdateCampaignDonationValue(long campaignId, decimal value);
+    Task UpdateCampaignDonationValue(long campaignId, decimal value);
 }
