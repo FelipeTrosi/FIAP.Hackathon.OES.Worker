@@ -5,6 +5,7 @@ using FIAP.Hackathon.OES.Worker.Services.Interfaces;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Prometheus;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -42,5 +43,9 @@ builder.Services.AddMassTransit(x =>
 
 builder.Services.AddHostedService<Worker>();
 
+var metricServer = new KestrelMetricServer(port: 9090);
+metricServer.Start();
+
 var host = builder.Build();
-host.Run();
+
+await host.RunAsync();
